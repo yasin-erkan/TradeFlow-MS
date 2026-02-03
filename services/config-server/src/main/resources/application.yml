@@ -1,0 +1,33 @@
+# TradeFlow Config Server Configuration
+# This server provides centralized configuration management for all microservices
+
+spring:
+  application:
+    name: config-server
+
+  # Using 'native' profile to read configurations from local filesystem
+  # Alternative: Use 'git' profile to read from Git repository
+  profiles:
+    active: native
+
+  cloud:
+    config:
+      server:
+        native:
+          # Configuration files location for all microservices
+          # Each service should have a [service-name].yml file in this directory
+          search-locations: classpath:/configurations
+
+# Config Server runs on port 8888
+server:
+  port: 8888
+
+# Actuator endpoints for monitoring and management
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,refresh
+  endpoint:
+    health:
+      show-details: always

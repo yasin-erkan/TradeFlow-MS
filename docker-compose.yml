@@ -1,0 +1,99 @@
+services:
+  # --- CORE DATABASES (Active) ---
+  tf-postgres:
+    container_name: tf_postgres
+    image: postgres
+    environment:
+      POSTGRES_USER: tradeflow_admin
+      POSTGRES_PASSWORD: tf_strong_password
+      PGDATA: /data/postgres
+    volumes:
+      - tf_postgres_data:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - tradeflow-net
+    restart: unless-stopped
+
+  tf-mongodb:
+    image: mongo
+    container_name: tf_mongodb
+    ports:
+      - "50000:27017"
+    volumes:
+      - tf_mongo_data:/data
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=tradeflow_admin
+      - MONGO_INITDB_ROOT_PASSWORD=tf_strong_password
+    networks:
+      - tradeflow-net
+    restart: unless-stopped
+
+  # --- SECURITY (Active) ---
+  tf-keycloak:
+    container_name: tf_keycloak
+    image: quay.io/keycloak/keycloak:latest
+    command: start-dev
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: tf_admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: tf_admin_pass
+    ports:
+      - "8080:8080"
+    networks:
+      - tradeflow-net
+    restart: unless-stopped
+
+  # --- MESSAGING (Active) ---
+  tf-zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: tf_zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - tradeflow-net
+    restart: unless-stopped
+    mem_limit: 512m
+
+  tf-kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: tf_kafka
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: tf_zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://tf_kafka:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_INTERNAL://0.0.0.0:29092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_LOG_RETENTION_HOURS: 168
+    depends_on:
+      - tf-zookeeper
+    networks:
+      - tradeflow-net
+    restart: unless-stopped
+    mem_limit: 1g
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+# --- NETWORKS ---
+networks:
+  tradeflow-net:
+    driver: bridge
+
+# --- VOLUMES ---
+volumes:
+  tf_postgres_data:
+  tf_mongo_data:
