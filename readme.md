@@ -14,6 +14,41 @@ cd services/discovery-server && ./mvnw spring-boot:run
 cd services/customer-service && ./mvnw spring-boot:run
 ```
 
+## 🏗️ Architecture
+
+```mermaid
+graph TB
+    Client[🌐 Client Application]
+
+    Client --> Gateway[🚪 API Gateway]
+
+    subgraph Infrastructure["🔧 Infrastructure Layer"]
+        Gateway --> Keycloak[🔐 Keycloak Auth]
+        Gateway --> Eureka[🛰️ Eureka Discovery]
+        Config[⚙️ Config Server]
+    end
+
+    subgraph Microservices["⚡ Microservices Layer"]
+        Gateway --> CustomerService[👤 Customer Service]
+        Gateway --> ProductService[📦 Product Service]
+        Gateway --> OrderService[🛒 Order Service]
+    end
+
+    subgraph Databases["💾 Database Layer"]
+        CustomerService --> MongoDB[(🍃 MongoDB)]
+        ProductService --> PostgreSQL[(🐘 PostgreSQL)]
+        OrderService --> PostgreSQL
+    end
+
+    Config -.->|Configuration| CustomerService
+    Config -.->|Configuration| ProductService
+    Config -.->|Configuration| OrderService
+
+    Eureka -.->|Service Registry| CustomerService
+    Eureka -.->|Service Registry| ProductService
+    Eureka -.->|Service Registry| OrderService
+```
+
 ## 🛠️ Tech Stack
 
 - **Backend:** Java 17, Spring Boot 3.4.2, Spring Cloud 2024.0.0
