@@ -4,7 +4,7 @@
 # PostgreSQL Configuration (for services using relational database)
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/tradeflow_db
+    url: jdbc:postgresql://tf_postgres:5432/tradeflow_db
     username: tradeflow_admin
     password: tf_strong_password
     driver-class-name: org.postgresql.Driver
@@ -20,19 +20,19 @@ spring:
   # MongoDB Configuration (for services using NoSQL database)
   data:
     mongodb:
-      # Local MongoDB (Docker) - Port 50000 mapped from container's 27017
-      host: localhost
-      port: 50000
+      # Docker internal MongoDB - use container name and internal port
+      host: tf_mongodb
+      port: 27017
       username: tradeflow_admin
       password: tf_strong_password
       authentication-database: admin
-      
+
       # For MongoDB Atlas (Cloud) - Uncomment to use Atlas
       # uri: mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<database>?retryWrites=true&w=majority
 
   # Kafka Configuration
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: tf_kafka:29092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -46,7 +46,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://tf-discovery-server:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
   instance:

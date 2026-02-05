@@ -1,4 +1,41 @@
 services:
+  # --- SPRING BOOT SERVICES ---
+  tf-config-server:
+    container_name: tf-config-server
+    build:
+      context: ./services/config-server
+    ports:
+      - "8888:8888"
+    networks:
+      - tradeflow-net
+    restart: unless-stopped
+
+  tf-discovery-server:
+    container_name: tf-discovery-server 
+    build:
+      context: ./services/discovery-server
+    ports:
+      - "8761:8761"
+    networks:
+      - tradeflow-net
+    depends_on:
+      - tf-config-server
+    restart: unless-stopped
+
+  tf-customer-service:
+    container_name: tf-customer-service
+    build:
+      context: ./services/customer-service
+    ports:
+      - "8090:8090"
+    networks:
+      - tradeflow-net
+    depends_on:
+      - tf-config-server
+      - tf-discovery-server
+      - tf-mongodb
+    restart: unless-stopped
+
   # --- CORE DATABASES (Active) ---
   tf-postgres:
     container_name: tf_postgres
@@ -17,9 +54,9 @@ services:
 
   tf-mongodb:
     image: mongo
-    container_name: tf_mongodb
+    container_name: tf-mongodb
     ports:
-      - "50000:27017"
+      - "27017:27017"
     volumes:
       - tf_mongo_data:/data
     environment:
