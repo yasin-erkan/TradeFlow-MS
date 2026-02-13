@@ -1,4 +1,4 @@
-package com.tradeflow.customer;
+package com.tradeflow.customer.exception;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,4 +13,3 @@ public class CustomerNotFoundException extends RuntimeException {
         this.msg = msg;
     }
 }
-

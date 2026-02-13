@@ -1,4 +1,4 @@
-package com.tradeflow.customer;
+package com.tradeflow.customer.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

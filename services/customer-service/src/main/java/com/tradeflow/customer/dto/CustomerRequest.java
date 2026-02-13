@@ -1,5 +1,6 @@
-package com.tradeflow.customer;
+package com.tradeflow.customer.dto;
 
+import com.tradeflow.customer.model.Address;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;

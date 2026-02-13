@@ -4,9 +4,6 @@ server:
 spring:
   application:
     name: customer-service
-  cloud:
-    config:
-      enabled: false
   data:
     mongodb:
       host: localhost
@@ -18,7 +15,6 @@ spring:
 
 eureka:
   client:
-    enabled: true
     service-url:
       defaultZone: http://localhost:8761/eureka/
     register-with-eureka: true

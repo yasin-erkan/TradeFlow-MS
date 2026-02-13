@@ -1,5 +1,8 @@
-package com.tradeflow.customer;
+package com.tradeflow.customer.mapper;
 
+import com.tradeflow.customer.dto.CustomerRequest;
+import com.tradeflow.customer.dto.CustomerResponse;
+import com.tradeflow.customer.model.Customer;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,7 +21,7 @@ public class CustomerMapper {
                 .build();
     }
 
-    public CustomerResponse toCustomerResponse(Customer customer) {
+    public CustomerResponse fromCustomer(Customer customer) {
         if (customer == null) {
             return null;
         }

@@ -1,0 +1,33 @@
+server:
+  port: 8050
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/product
+    username: tradeflow_admin
+    password: tf_strong_password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 0
+    baseline-description: 'Init'
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+    locations:
+      - classpath:db/migration
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true

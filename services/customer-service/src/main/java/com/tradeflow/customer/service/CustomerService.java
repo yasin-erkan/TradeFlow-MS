@@ -1,5 +1,11 @@
-package com.tradeflow.customer;
+package com.tradeflow.customer.service;
 
+import com.tradeflow.customer.dto.CustomerRequest;
+import com.tradeflow.customer.dto.CustomerResponse;
+import com.tradeflow.customer.exception.CustomerNotFoundException;
+import com.tradeflow.customer.mapper.CustomerMapper;
+import com.tradeflow.customer.model.Customer;
+import com.tradeflow.customer.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -32,22 +38,23 @@ public class CustomerService {
     public List<CustomerResponse> findAllCustomers() {
         return repository.findAll()
                 .stream()
-                .map(mapper::toCustomerResponse)
+                .map(mapper::fromCustomer)
                 .collect(Collectors.toList());
+    }
+
+    public boolean existsById(String customerId) {
+        return repository.findById(customerId)
+                .isPresent();
     }
 
     public CustomerResponse findById(String customerId) {
         return repository.findById(customerId)
-                .map(mapper::toCustomerResponse)
+                .map(mapper::fromCustomer)
                 .orElseThrow(() -> new CustomerNotFoundException(
                         String.format("Cannot find customer with id %s :: No Customer Found", customerId)
                 ));
     }
-
-    public boolean existsById(String customerId) {
-        return repository.existsById(customerId);
-    }
-
+    
     public void deleteCustomer(String customerId) {
         repository.deleteById(customerId);
     }

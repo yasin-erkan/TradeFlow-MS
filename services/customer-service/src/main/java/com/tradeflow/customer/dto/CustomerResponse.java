@@ -1,4 +1,6 @@
-package com.tradeflow.customer;
+package com.tradeflow.customer.dto;
+
+import com.tradeflow.customer.model.Address;
 
 public record CustomerResponse(
         String id,

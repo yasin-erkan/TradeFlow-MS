@@ -1,5 +1,8 @@
-package com.tradeflow.customer;
+package com.tradeflow.customer.controller;
 
+import com.tradeflow.customer.dto.CustomerRequest;
+import com.tradeflow.customer.dto.CustomerResponse;
+import com.tradeflow.customer.service.CustomerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +36,7 @@ public class CustomerController {
     public ResponseEntity<List<CustomerResponse>> findAll() {
         return ResponseEntity.ok(service.findAllCustomers());
     }
-
+    
     @GetMapping("/exists/{customer-id}")
     public ResponseEntity<Boolean> existsById(
             @PathVariable("customer-id") String customerId
